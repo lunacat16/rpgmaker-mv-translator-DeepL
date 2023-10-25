@@ -5,19 +5,19 @@ import os
 import sys
 import time
 
-from googletrans import Translator  # pip install googletrans==4.0.0rc1
+from deepl import Translator  # pip install deepl
 
 from print_neatly import print_neatly
 
 
-def translate(file_path, tr, src='it', dst='en', verbose=False, max_retries=5):
-
+def translate(file_path, tr, src='EN', dst='KO', verbose=False, max_retries=5):
     def translate_sentence(text):
         target = text
-        translation = tr.translate(target, src=src, dest=dst).text
-        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
-            translation = translation[0].lower() + translation[1:]
+        target.replace('\n', ' ') # 게임 Text에 따라 사용 혹은 제거
+        translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
+        
         text = translation
+        # text.replace('팝', 'pop') # Only for orangeblood
         if verbose:
             print(target, '->', translation)
         return text
@@ -90,13 +90,10 @@ def translate(file_path, tr, src='it', dst='en', verbose=False, max_retries=5):
     return data, translations
 
 
-def translate_neatly(file_path, tr, src='it', dst='en', verbose=False, max_len=40, max_retries=5):
-
+def translate_neatly(file_path, tr, src='EN', dst='KO', verbose=False, max_len=40, max_retries=5):
     def translate_sentence(text):
         target = text
-        translation = tr.translate(target, src=src, dest=dst).text
-        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
-            translation = translation[0].lower() + translation[1:]
+        translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
         text = translation
         return text
 
@@ -194,13 +191,10 @@ def translate_neatly(file_path, tr, src='it', dst='en', verbose=False, max_len=4
     return data, translations
 
 
-def translate_neatly_common_events(file_path, tr, src='it', dst='en', verbose=False, max_len=55, max_retries=5):
-
+def translate_neatly_common_events(file_path, tr, src='EN', dst='KO', verbose=False, max_len=40, max_retries=5):
     def translate_sentence(text):
         target = text
-        translation = tr.translate(target, src=src, dest=dst).text
-        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
-            translation = translation[0].lower() + translation[1:]
+        translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
         text = translation
         return text
 
@@ -263,13 +257,14 @@ def translate_neatly_common_events(file_path, tr, src='it', dst='en', verbose=Fa
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--input_folder", type=str, default="dialogs")
-    ap.add_argument("-sl", "--source_lang", type=str, default="it")
-    ap.add_argument("-dl", "--dest_lang", type=str, default="en")
+    ap.add_argument("-sl", "--source_lang", type=str, default="")
+    ap.add_argument("-dl", "--dest_lang", type=str, default="KO")
     ap.add_argument("-v", "--verbose", action="store_true", default=False)
     ap.add_argument("-nf", "--no_format", action="store_true", default=False)
     ap.add_argument("-pn", "--print_neatly", action="store_true", default=False)
-    ap.add_argument("-ml", "--max_len", type=int, default=44)
+    ap.add_argument("-ml", "--max_len", type=int, default=42)
     ap.add_argument("-mr", "--max_retries", type=int, default=10)
+    ap.add_argument("-api-key", "--auth_key", type=str, default="")
     args = ap.parse_args()
     dest_folder = args.input_folder + '_' + args.dest_lang
     translations = 0
@@ -284,15 +279,15 @@ if __name__ == '__main__':
             print('translating file: {}'.format(file_path))
             if file.startswith('Map'):
                 if args.print_neatly:
-                    new_data, t = translate_neatly(file_path, tr=Translator(), max_len=args.max_len,
+                    new_data, t = translate_neatly(file_path, tr=Translator(args.auth_key), max_len=args.max_len,
                                                    src=args.source_lang, dst=args.dest_lang, verbose=args.verbose,
                                                    max_retries=args.max_retries)
                 else:
-                    new_data, t = translate(file_path, tr=Translator(),
+                    new_data, t = translate(file_path, tr=Translator(args.auth_key),
                                             src=args.source_lang, dst=args.dest_lang, verbose=args.verbose,
                                             max_retries=args.max_retries)
             elif file.startswith('CommonEvents'):
-                new_data, t = translate_neatly_common_events(file_path, tr=Translator(), max_len=args.max_len,
+                new_data, t = translate_neatly_common_events(file_path, tr=Translator(args.auth_key), max_len=args.max_len,
                                                src=args.source_lang, dst=args.dest_lang, verbose=args.verbose,
                                                max_retries=args.max_retries)
             translations += t
