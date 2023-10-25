@@ -12,9 +12,11 @@ def translate(file_path, tr, src='EN', dst='KO', verbose=False, max_retries=5, m
     def translate_sentence(text):
         target = text
         translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
+        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
+            translation = translation[0].lower() + translation[1:]
         text = translation
         if verbose:
-            print(target, '->', translation)
+            print(target, '->', text)
         return text
 
     def translate_and_check(text, remove_escape=True, neatly=False, keep_space=True):
@@ -108,7 +110,7 @@ def translate(file_path, tr, src='EN', dst='KO', verbose=False, max_retries=5, m
     return data, translations
 
 
-# usage: python objects_translator.py --source_lang it --dest_lang en --auth_key [YOUR_API_KEY] # do not type '[', ']'
+# usage: python objects_translator.py --source_lang it --dest_lang en
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--input_folder", type=str, default="objects")
