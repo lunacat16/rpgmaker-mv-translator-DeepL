@@ -3,18 +3,15 @@ import json
 import os
 import time
 
-from googletrans import Translator  # pip install googletrans==4.0.0rc1
+from deepl import Translator  # pip install deepl
 
 from print_neatly import print_neatly
 
 
-def translate(file_path, tr, src='it', dst='en', verbose=False, max_retries=5, max_len=55):
-
+def translate(file_path, tr, src='EN', dst='KO', verbose=False, max_retries=5, max_len=55):
     def translate_sentence(text):
         target = text
-        translation = tr.translate(target, src=src, dest=dst).text
-        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
-            translation = translation[0].lower() + translation[1:]
+        translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
         text = translation
         if verbose:
             print(target, '->', translation)
@@ -100,6 +97,7 @@ def translate(file_path, tr, src='it', dst='en', verbose=False, max_retries=5, m
                     prf_tr, success = translate_and_check(d['profile'], remove_escape=True, neatly=True)
                     d['profile'] = prf_tr
                     translations += success
+                # <speech/* : 대사> -> 대사 번역 구현
                 for m in range(1, 5):
                     message = 'message' + str(m)
                     if message in d.keys() and len(d[message]) > 0:
@@ -110,19 +108,21 @@ def translate(file_path, tr, src='it', dst='en', verbose=False, max_retries=5, m
     return data, translations
 
 
-# usage: python objects_translator.py --source_lang it --dest_lang en
+# usage: python objects_translator.py --source_lang it --dest_lang en --auth_key [YOUR_API_KEY] # do not type '[', ']'
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--input_folder", type=str, default="objects")
-    ap.add_argument("-sl", "--source_lang", type=str, default="it")
-    ap.add_argument("-dl", "--dest_lang", type=str, default="en")
+    ap.add_argument("-sl", "--source_lang", type=str, default="")
+    ap.add_argument("-dl", "--dest_lang", type=str, default="KO")
     ap.add_argument("-v", "--verbose", action="store_true", default=False)
     ap.add_argument("-nf", "--no_format", action="store_true", default=False)
-    ap.add_argument("-ml", "--max_len", type=int, default=55)
+    ap.add_argument("-ml", "--max_len", type=int, default=40)
     ap.add_argument("-mr", "--max_retries", type=int, default=10)
+    ap.add_argument("-api-key", "--auth_key", type=str, default="")
     args = ap.parse_args()
     dest_folder = args.input_folder + '_' + args.dest_lang
     translations = 0
+
     if not os.path.exists(dest_folder):
         os.makedirs(dest_folder)
     for file in os.listdir(args.input_folder):
@@ -132,7 +132,7 @@ if __name__ == '__main__':
             continue
         if file.endswith('.json'):
             print('translating file: {}'.format(file_path))
-            new_data, t = translate(file_path, tr=Translator(), max_len=args.max_len,
+            new_data, t = translate(file_path, tr=Translator(args.auth_key), max_len=args.max_len,
                                     src=args.source_lang, dst=args.dest_lang, verbose=args.verbose,
                                     max_retries=args.max_retries)
             translations += t
