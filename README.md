@@ -1,25 +1,18 @@
-# RPGMaker-MV Translator 🕹️
+# RPGMaker-MV Translator by DeepL 🕹️
 
-🎮 Use AI to translate all the dialogs and texts of your RPGMaker *automatically*.
+## There is already [RPG-MV translate tool](https://github.com/RPG-Maker-Translator/RPG-Maker-Translator). Why you maked this?
 
-👊 You worked hard to make your game, now let *AI* work hard for you.
+Because [DeepL](https://github.com/DeepLcom/deepl-python) is better than Google Translate for English-Korean translations. That's all.
 
-| Original language 🇮🇹 | Automatic Translation  🇺🇸 |
-|:----------------------:|:---------------------------:|
-|  ![](images/ita2.jpg)  |     ![](images/en2.jpg)     |
-|  ![](images/ita1.jpg)  |     ![](images/en1.jpg)     |
+|**OrangeBlood (EN)**| **DeepL Translation (KO)** |
+|:---------------------------------:|:-------------------------------------:|
+|  ![](images/Orangeblood_EN.jpg)  |     ![](images/Orangeblood_KO.jpg)     |
 
-## Why should you use it? 🤔
+## How to use this?
 
-👉 RPG games usually consist of many thousands of dialog events and other forms of text displaying valuable information
-to understand the plot of the game, but also to know the effect and proprieties of various objects present in the game
-such as items, weapons, skills, enemies, ... .
+You need to get [deepL API key](https://www.deepl.com/ko/account/summary) by yourself.
 
-👉 Translating an RPG game from one language to another would thus require an enormous amount of time
-and effort for a human, but it is a task that can be easily accomplished by a machine, or at least speed up considerably the
-work of a human translator saving costs and time.
-
-👉 This project implements a tool that is able to automatically translate a game deployed with [RPGMaker-MV](https://www.rpgmakerweb.com/products/rpg-maker-mv).
+If you get key, you can use deepL to automatic-translate.
 
 ## Game files overview 🎮
 
@@ -49,16 +42,15 @@ nothing critical to translate such as `Animations.json`.
 
 **Note**: the program uses a Google Translate API to perform translations, thus a **stable** internet connection is required.
 
-1. Clone this repo: `git clone https://github.com/davide97l/rpgmaker-mv-translator`.
+1. Clone this repo: `git clone https://github.com/lunacat16/rpgmaker-mv-translator-DeepL`.
 2. Install dependencies: `pip install -r requirements.txt`.
 3. Copy `CommonEvents.json` and all the `MapXXX.json` files from you game `data/folder` to this project `dialogs` folder.
-4. For a basic usage, run the command:
+4. For a basic usage, run the command: (! This is different with Original version.)
 ```
-  python dialogs_translator.py --print_neatly --source_lang it --dest_lang en
+  python dialogs_translator.py --source_lang EN --dest_lang KO --verbose --auth_key [YOUR_API_KEY]
 ```
 3. Most important arguments explanation:
-   - `source_lang`: (string) the **original language** of your game (en - english, it - italian, zh - chinese, fr -french,
-   sp - spanish, de - deutsch, ...). 
+   - `source_lang`: (string) the **original language** of your game (EN - English, KO - Korean, ...). If omitted, deepL will automatically detect the language.
    - `dest_lang`: (string) the language you want to **translate** your game.
    - `verbose`: (bool) if True, show each original and corresponding translated sentence during execution.
    - `input_folder`: (string) the folder containing the files to translate (default: `dialogs`).
@@ -68,6 +60,7 @@ nothing critical to translate such as `Animations.json`.
      translating each row one by one which causes loss of context. If you are curious how this algorithm works you can
      check this [blog](https://davideliu.com/2019/12/22/print-neatly/).
    - `max_len` (int): Used only when `print_neatly` is True. Indicates the length of the dialog window.
+   - `auth_key` (string): Enter your deepL API key.
 4. After execution, which may take a while depending on the number and size of files, your translated files will be saved in `data_xx`
    where `xx` is the code of the translated language (`dialogs_en` if `--dest_lang en`).
 5. Copy back the content of `dialogs_xx` to the folder `data` of your game replacing the old files.
@@ -97,7 +90,7 @@ Example of **print neatly** with `max_len=32` translating from english to italia
    from you game `data/` folder to this project `object` folder.
 3. For a basic usage, run the command:
 ```
-  python objects_translator.py --source_lang it --dest_lang en
+  python objects_translator.py --source_lang EN --dest_lang KO --verbose --auth_key [YOUR_API_KEY] 
 ```
 3. The arguments are the same as the ones used by `dialogs_translator.py`, and print neatly is automatically used in the **description** field.
     By default `input_folder` is set to `objects`).
@@ -109,4 +102,4 @@ Example of **print neatly** with `max_len=32` translating from english to italia
 If you found this project interesting please support me by giving it a :star:, I would really appreciate it :grinning:
 
 ## More
-Check this [link](https://davideliu.com/category/videogames/) to play some of my RPGs 😍.
+Check this [link](https://davideliu.com/category/videogames/) to play some of my RPGs 😍. 
