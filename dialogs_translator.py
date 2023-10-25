@@ -13,13 +13,15 @@ from print_neatly import print_neatly
 def translate(file_path, tr, src='EN', dst='KO', verbose=False, max_retries=5):
     def translate_sentence(text):
         target = text
+        
         target.replace('\n', ' ') # 게임 Text에 따라 사용 혹은 제거
         translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
-        
+        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
+            translation = translation[0].lower() + translation[1:]
         text = translation
-        # text.replace('팝', 'pop') # Only for orangeblood
+        #text.replace('팝', 'pop') # Only for orangeblood
         if verbose:
-            print(target, '->', translation)
+            print(target, '->', text)
         return text
 
     def try_translate_sentence(text):
@@ -94,6 +96,8 @@ def translate_neatly(file_path, tr, src='EN', dst='KO', verbose=False, max_len=4
     def translate_sentence(text):
         target = text
         translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
+        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
+            translation = translation[0].lower() + translation[1:]
         text = translation
         return text
 
@@ -195,6 +199,8 @@ def translate_neatly_common_events(file_path, tr, src='EN', dst='KO', verbose=Fa
     def translate_sentence(text):
         target = text
         translation = tr.translate_text(target, source_lang=src, target_lang=dst).text
+        if target[0].isalpha() and translation[0].isalpha and not target[0].isupper():
+            translation = translation[0].lower() + translation[1:]
         text = translation
         return text
 
